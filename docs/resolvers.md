@@ -124,6 +124,8 @@ public class PersonType
 }
 ```
 
+## Resolver Types
+
 Since, a lot of resolver logic like the one in the above example can the code difficult to test and difficult to read, resolvers can also be included from classes.
 
 ```CSharp
@@ -135,6 +137,35 @@ Furthermore, I can also include all fields of a resolver type implicitly like th
 ```CSharp
 descriptor.Include<Query>();
 ```
+
+We can also reverse the relationship between the type and it`s resolvers. We can include and declare resolvers explicitly in the type, but we can also declare a class that shall act as a resolver type for one or more types.
+
+```CSharp
+[GraphQLResolverOf(typeof(Person))]
+[GraphQLResolverOf("Query")]
+public class SomeResolvers
+{
+    public Person GetFriend([Parent]Person person)
+    {
+        // resolver code
+    }
+
+    [GraphQLDescription("This field does ...")]
+    public string GetGreetings([Parent]Query person, string name)
+    {
+        // resolver code
+    }
+}
+```
+
+The above example class `SomeResolvers` provides resolvers for multiple types. The types can be declared with the `GraphQLResolverOfAttribute` either by providing the payload .NET type or by providing the schema type name.
+
+The schema builder will associate the various resolver methods with the correct schema fields and types by analything the method parameters. We are providing a couple of attributes that can be used to give the resolver method more context like the return type or the description and so on.
+
+
+## Dependency Injection
+
+
 
 ## Resolver Context
 
